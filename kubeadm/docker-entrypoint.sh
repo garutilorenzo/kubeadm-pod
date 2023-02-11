@@ -1,5 +1,14 @@
-
 #!/bin/bash
+set -eo pipefail
+shopt -s nullglob
+
+# check to see if this file is being run or sourced from another script
+_is_sourced() {
+	# https://unix.stackexchange.com/a/215279
+	[ "${#FUNCNAME[@]}" -ge 2 ] \
+		&& [ "${FUNCNAME[0]}" = '_is_sourced' ] \
+		&& [ "${FUNCNAME[1]}" = 'source' ]
+}
 
 generate_vault_secrets(){
   HASH=$(openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //')
@@ -39,15 +48,22 @@ check_vars(){
   fi
 }
 
-export OCI_CLI_AUTH=instance_principal
-check_vars
+_main(){
+  export OCI_CLI_AUTH=instance_principal
 
-if [ "$1" = 'kubeadm' ]; then
-  while :
-  do
-    echo "Generating kubernetes secrets..."
-    generate_vault_secrets
-    sleep 3600
-  done
+  if [ "$1" = 'kubeadm' ]; then
+    while :
+    do
+      echo "Generating kubernetes secrets..."
+      check_vars
+      generate_vault_secrets
+      sleep 3600
+    done
+  fi
+  exec "$@"
+}
+
+# If we are sourced from elsewhere, don't perform any further actions
+if ! _is_sourced; then
+	_main "$@"
 fi
-exec "$@"
