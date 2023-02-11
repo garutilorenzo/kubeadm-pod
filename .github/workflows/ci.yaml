@@ -4,6 +4,8 @@ on:
   push:
     branches:
     - master
+    paths:
+    - 'kubeadm/**'
 
 jobs:
   build:
@@ -26,7 +28,7 @@ jobs:
       with:
         builder: ${{ steps.buildx.outputs.name }}
         context: .
-        file: ./Dockerfile
+        file: ./kubeadm/Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
         tags: garutilorenzo/kubeadm:oci
