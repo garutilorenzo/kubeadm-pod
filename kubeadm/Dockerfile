@@ -10,3 +10,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] htt
 RUN apt-get update && apt-get install -y --no-install-recommends kubeadm
 RUN apt-get install -y  --no-install-recommends python3-pip && pip3 install oci-cli
 RUN apt-get clean -y && apt-get autoclean -y && apt-get autoremove -y &&  rm -rf /var/lib/apt/lists/*
+
+COPY ./docker-entrypoint.sh  /usr/local/bin/docker-entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["kubeadm"]

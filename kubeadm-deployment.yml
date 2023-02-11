@@ -23,9 +23,6 @@ spec:
       containers:
         - name: kubeadm-oci
           image: garutilorenzo/kubeadm:oci
-          tty: true
-          command: [ "kubeadm" ]
-          args: [ "token", "create" ]
           volumeMounts:
             - name: kubernetes-vol
               mountPath: /etc/kubernetes
