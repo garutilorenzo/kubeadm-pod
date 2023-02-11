@@ -1,4 +1,6 @@
 
+#!/bin/bash
+
 generate_vault_secrets(){
   HASH=$(openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //')
   HASH_BASE64=$(echo $HASH | base64 -w0)
