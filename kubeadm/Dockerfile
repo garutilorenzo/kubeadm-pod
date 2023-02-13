@@ -1,6 +1,6 @@
 FROM ubuntu:22.04
 
-RUN apt-get update && apt-get install -y --no-install-recommends wget lsb-release hostname gnupg dirmngr curl ca-certificates
+RUN apt-get update && apt-get install -y --no-install-recommends wget lsb-release hostname gnupg dirmngr curl ca-certificates jq
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg |  gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 RUN echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
