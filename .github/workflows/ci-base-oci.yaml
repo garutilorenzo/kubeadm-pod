@@ -28,7 +28,7 @@ jobs:
       with:
         builder: ${{ steps.buildx.outputs.name }}
         context: .
-        file: ./kubeadm/Dockerfile
+        file: ./kubeadm/Dockerfile.base.oci
         platforms: linux/amd64,linux/arm64
         push: true
         tags: garutilorenzo/kubeadm:baseoci
