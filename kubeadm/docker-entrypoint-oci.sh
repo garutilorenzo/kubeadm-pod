@@ -1,5 +1,4 @@
 #!/bin/bash
-# Trigger GitHub Workflow CI
 
 set -eo pipefail
 shopt -s nullglob
