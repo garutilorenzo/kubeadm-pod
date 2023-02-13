@@ -1,5 +1,5 @@
 FROM ubuntu:22.04
-
+# Trigger
 RUN apt-get update && apt-get install -y --no-install-recommends wget lsb-release hostname gnupg dirmngr curl ca-certificates jq unzip
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg |  gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 RUN echo \
