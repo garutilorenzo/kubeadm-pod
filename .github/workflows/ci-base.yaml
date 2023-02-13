@@ -5,7 +5,7 @@ on:
     branches:
     - master
     paths:
-    - 'kubeadm/**'
+    - 'kubeadm/Dockerfile'
 
 jobs:
   build:
@@ -31,4 +31,4 @@ jobs:
         file: ./kubeadm/Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: garutilorenzo/kubeadm:oci
+        tags: garutilorenzo/kubeadm:base
