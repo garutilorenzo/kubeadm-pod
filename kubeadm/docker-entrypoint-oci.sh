@@ -21,13 +21,13 @@ generate_vault_secrets(){
   CERT=$(kubeadm init phase upload-certs --upload-certs | tail -n 1)
   CERT_BASE64=$(echo $CERT | base64 -w0)
 
-  hash_ocid=$(oci vault secret list --compartment-id $COMPARTMENT_OCID  | jq -r '.data[] | select(."secret-name" == "${hash_secret_name}-${environment}" and ."lifecycle-state" == "ACTIVE") | .id')
-  token_ocid=$(oci vault secret list --compartment-id $COMPARTMENT_OCID | jq -r '.data[] | select(."secret-name" == "${token_secret_name}-${environment}" and ."lifecycle-state" == "ACTIVE") | .id')
-  cert_ocid=$(oci vault secret list --compartment-id $COMPARTMENT_OCID  | jq -r '.data[] | select(."secret-name" == "${cert_secret_name}-${environment}" and ."lifecycle-state" == "ACTIVE") | .id')
+  hash_ocid=$(oci vault secret list --compartment-id $COMPARTMENT_OCID  | jq -r '.data[] | select(."secret-name" == '"\"$HASH_NAME"\"' and ."lifecycle-state" == "ACTIVE") | .id')
+  token_ocid=$(oci vault secret list --compartment-id $COMPARTMENT_OCID | jq -r '.data[] | select(."secret-name" == '"\"$TOKEN_NAME"\"' and ."lifecycle-state" == "ACTIVE") | .id')
+  cert_ocid=$(oci vault secret list --compartment-id $COMPARTMENT_OCID  | jq -r '.data[] | select(."secret-name" == '"\"$CERT_NAME"\"' and ."lifecycle-state" == "ACTIVE") | .id')
   
-  oci vault secret update-base64 --secret-id $HASH_OCID  --secret-content-content $HASH_BASE64
-  oci vault secret update-base64 --secret-id $TOKEN_OCID --secret-content-content $TOKEN_BASE64
-  oci vault secret update-base64 --secret-id $CERT_OCID  --secret-content-content $CERT_BASE64
+  oci vault secret update-base64 --secret-id $hash_ocid  --secret-content-content $HASH_BASE64
+  oci vault secret update-base64 --secret-id $token_ocid --secret-content-content $TOKEN_BASE64
+  oci vault secret update-base64 --secret-id $cert_ocid  --secret-content-content $CERT_BASE64
 }
 
 check_vars(){
@@ -35,16 +35,16 @@ check_vars(){
     echo "COMPARTMENT_OCID env variable is required!"
     exit 1
   fi
-  if [ -z "$HASH_OCID" ]; then
-    echo "HASH_OCID env variable is required!"
+  if [ -z "$HASH_NAME" ]; then
+    echo "HASH_NAME env variable is required!"
     exit 1
   fi
-  if [ -z "$TOKEN_OCID" ]; then
-    echo "TOKEN_OCID env variable is required!"
+  if [ -z "$CERT_NAME" ]; then
+    echo "CERT_NAME env variable is required!"
     exit 1
   fi
-  if [ -z "$CERT_OCID" ]; then
-    echo "CERT_OCID env variable is required!"
+  if [ -z "$TOKEN_NAME" ]; then
+    echo "TOKEN_NAME env variable is required!"
     exit 1
   fi
 }
