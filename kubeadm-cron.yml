@@ -1,0 +1,41 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: kubeadm-pod
+spec:
+  schedule: "0 22 * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: kubeadm-pod
+          labels:
+            name: kubeadm-pod
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: kubeadm-oci
+              image: garutilorenzo/kubeadm:oci
+              imagePullPolicy: Always
+              env:
+              - name: PROVIDER
+                value: oci
+              - name: COMPARTMENT_OCID
+                value: ocid1.tenancy.xxxxx
+              - name: CERT_NAME
+                value: <secret_name>
+              - name: HASH_NAME
+                value: <hasg_name>
+              - name: TOKEN_NAME
+                value: <token_name>
+              volumeMounts:
+                - name: kubernetes-vol
+                  mountPath: /etc/kubernetes
+          nodeSelector:
+            node-role.kubernetes.io/control-plane:
+          volumes:
+            - name: kubernetes-vol
+              hostPath:
+                path: /etc/kubernetes
+                type: Directory
