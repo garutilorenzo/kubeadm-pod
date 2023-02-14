@@ -1,12 +1,12 @@
-name: CI build kubeadm oci image
+name: CI build kubeadm final image
 
 on:
   push:
     branches:
     - master
     paths:
-    - 'kubeadm/Dockerfile.oci'
-    - 'kubeadm/docker-entrypoint-oci.sh'
+    - 'kubeadm/Dockerfile.final'
+    - 'kubeadm/docker-entrypoint.sh'
 
 jobs:
   build:
@@ -29,7 +29,7 @@ jobs:
       with:
         builder: ${{ steps.buildx.outputs.name }}
         context: .
-        file: ./kubeadm/Dockerfile.oci
+        file: ./kubeadm/Dockerfile.final
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: garutilorenzo/kubeadm:oci
+        tags: garutilorenzo/kubeadm:latest

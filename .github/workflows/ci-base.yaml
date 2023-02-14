@@ -1,11 +1,11 @@
-name: CI build kubeadm base aws image
+name: CI build kubeadm base image
 
 on:
   push:
     branches:
     - master
     paths:
-    - 'kubeadm/Dockerfile.base.aws'
+    - 'kubeadm/Dockerfile.base'
 
 jobs:
   build:
@@ -28,7 +28,7 @@ jobs:
       with:
         builder: ${{ steps.buildx.outputs.name }}
         context: .
-        file: ./kubeadm/Dockerfile.base.aws
+        file: ./kubeadm/Dockerfile.base
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: garutilorenzo/kubeadm:baseaws
+        tags: garutilorenzo/kubeadm:base
