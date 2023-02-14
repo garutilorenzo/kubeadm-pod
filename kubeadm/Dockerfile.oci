@@ -1,5 +1,4 @@
-FROM garutilorenzo/kubeadm:base
-# trigger GitHub Actions CI
+FROM garutilorenzo/kubeadm:baseoci
 COPY kubeadm/docker-entrypoint-oci.sh /usr/local/bin/docker-entrypoint.sh
 RUN ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
 ENTRYPOINT ["docker-entrypoint.sh"]
