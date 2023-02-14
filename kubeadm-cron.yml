@@ -15,8 +15,8 @@ spec:
         spec:
           restartPolicy: OnFailure
           containers:
-            - name: kubeadm-oci
-              image: garutilorenzo/kubeadm:oci
+            - name: kubeadm
+              image: garutilorenzo/kubeadm:latest
               imagePullPolicy: Always
               env:
               - name: PROVIDER
