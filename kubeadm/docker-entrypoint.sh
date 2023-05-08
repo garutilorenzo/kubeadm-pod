@@ -11,6 +11,16 @@ _is_sourced() {
     && [ "${FUNCNAME[1]}" = 'source' ]
 }
 
+cleanup_oci_secrets(){
+  SECRET_ID=$1
+  for secret_version_number in $(oci vault secret-version list --secret-id  $SECRET_ID | jq '.data[] | select(.stages[] == "DEPRECATED") | ."version-number"')
+  do
+    echo "Deleting version: $secret_version_number of secret $SECRET_ID"
+    TIME_OF_DELETION=$(date -u '+%Y-%m-%dT%H:%M:%SZ' --date="+ 1 day +1 hour")
+    oci vault secret-version schedule-deletion --secret-id $SECRET_ID --secret-version-number $secret_version_number --time-of-deletion $TIME_OF_DELETION
+  done
+}
+
 generate_oci_secrets(){
   HASH=$(openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //')
   HASH_BASE64=$(echo $HASH | base64 -w0)
@@ -28,6 +38,10 @@ generate_oci_secrets(){
   oci vault secret update-base64 --secret-id $hash_ocid  --secret-content-content $HASH_BASE64
   oci vault secret update-base64 --secret-id $token_ocid --secret-content-content $TOKEN_BASE64
   oci vault secret update-base64 --secret-id $cert_ocid  --secret-content-content $CERT_BASE64
+
+  cleanup_oci_secrets $hash_ocid
+  cleanup_oci_secrets $token_ocid
+  cleanup_oci_secrets $cert_ocid
 }
 
 generate_aws_secrets(){
