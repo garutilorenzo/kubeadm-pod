@@ -13,7 +13,7 @@ _is_sourced() {
 
 cleanup_oci_secrets(){
   SECRET_ID=$1
-  for secret_version_number in $(oci vault secret-version list --secret-id  $SECRET_ID | jq '.data[] | select(.stages[] == "DEPRECATED") | ."version-number"')
+  for secret_version_number in $(oci vault secret-version list --secret-id  $SECRET_ID | jq '.data[] | select(.stages[] == "DEPRECATED" and ."time-of-deletion" == null) | ."version-number"')
   do
     echo "Deleting version: $secret_version_number of secret $SECRET_ID"
     TIME_OF_DELETION=$(date -u '+%Y-%m-%dT%H:%M:%SZ' --date="+ 1 day +1 hour")
