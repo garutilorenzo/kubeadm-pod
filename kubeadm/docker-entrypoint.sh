@@ -35,9 +35,30 @@ generate_oci_secrets(){
   token_ocid=$(oci vault secret list --compartment-id $COMPARTMENT_OCID | jq -r '.data[] | select(."secret-name" == '"\"$TOKEN_NAME"\"' and ."lifecycle-state" == "ACTIVE") | .id')
   cert_ocid=$(oci vault secret list --compartment-id $COMPARTMENT_OCID  | jq -r '.data[] | select(."secret-name" == '"\"$CERT_NAME"\"' and ."lifecycle-state" == "ACTIVE") | .id')
   
-  oci vault secret update-base64 --secret-id $hash_ocid  --secret-content-content $HASH_BASE64
-  oci vault secret update-base64 --secret-id $token_ocid --secret-content-content $TOKEN_BASE64
-  oci vault secret update-base64 --secret-id $cert_ocid  --secret-content-content $CERT_BASE64
+  hash_latest_update_timestamp=$(oci vault secret-version list --secret-id $hash_ocid | jq -r '.data[] | select(.stages[] == "LATEST") | ."time-created"')
+  token_latest_update_timestamp=$(oci vault secret-version list --secret-id $token_ocid | jq -r '.data[] | select(.stages[] == "LATEST") | ."time-created"')
+  cert_latest_update_timestamp=$(oci vault secret-version list --secret-id $cert_ocid | jq -r '.data[] | select(.stages[] == "LATEST") | ."time-created"')
+
+  hash_latest_update_date=$(date -d $hash_latest_update_timestamp +"%Y%m%d")
+  token_latest_update_date=$(date -d $token_latest_update_timestamp +"%Y%m%d")
+  cert_latest_update_date=$(date -d $cert_latest_update_timestamp +"%Y%m%d")
+
+  today=$(date +"%Y%m%d")
+  if [ $hash_latest_update_date -lt $today ]; then
+    oci vault secret update-base64 --secret-id $hash_ocid  --secret-content-content $HASH_BASE64
+  else
+    echo "Hash already updated on $today"
+  fi
+  if [ $token_latest_update_date -lt $today ]; then
+    oci vault secret update-base64 --secret-id $token_ocid --secret-content-content $TOKEN_BASE64
+  else
+    echo "Token already updated on $today"
+  fi
+  if [ $cert_latest_update_date -lt $today ]; then
+    oci vault secret update-base64 --secret-id $cert_ocid  --secret-content-content $CERT_BASE64
+  else
+    echo "Cert already updated on $today"
+  fi
 
   cleanup_oci_secrets $hash_ocid
   cleanup_oci_secrets $token_ocid
