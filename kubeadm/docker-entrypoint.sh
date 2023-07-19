@@ -75,9 +75,9 @@ generate_aws_secrets(){
   CERT=$(kubeadm init phase upload-certs --upload-certs | tail -n 1)
   echo $CERT > /tmp/kubeadm_cert.txt
   
-  hash_arn=$(aws secretsmanager list-secrets --filter Key=name,Values=$HASH_NAME | jq -r .SecretList[0].ARN)
-  cert_arn=$(aws secretsmanager list-secrets --filter Key=name,Values=$CERT_NAME | jq -r .SecretList[0].ARN)
-  token_arn=$(aws secretsmanager list-secrets --filter Key=name,Values=$TOKEN_NAME | jq -r .SecretList[0].ARN)
+  hash_arn=$(aws secretsmanager list-secrets --filter Key="name",Values="$HASH_NAME" | jq -r '.SecretList[0].ARN')
+  cert_arn=$(aws secretsmanager list-secrets --filter Key="name",Values="$CERT_NAME" | jq -r '.SecretList[0].ARN')
+  token_arn=$(aws secretsmanager list-secrets --filter Key="name",Values="$TOKEN_NAME" | jq -r '.SecretList[0].ARN')
 
   aws secretsmanager update-secret --secret-id $hash_arn --secret-string file:///tmp/ca.txt
   aws secretsmanager update-secret --secret-id $cert_arn --secret-string file:///tmp/kubeadm_cert.txt
